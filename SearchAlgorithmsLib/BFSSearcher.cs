@@ -3,37 +3,37 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-
+using MazeLib;
 namespace SearchAlgorithmsLib
 {
-    public class BFSSearcher<T> : Searcher<T>
+    public class BFSSearcher : Searcher
     {
 
         public BFSSearcher()
         {
 
-            openList = new PriorityQueue<State<T>>(new StateComparer<T>());
+            openList = new PriorityQueue<State<Position>>(new StateComparer<Position>());
         }
 
-        private State<T> popOpenList()
+        private State<Position> popOpenList()
         {
             evaluatedNodes++;
-            return (openList as PriorityQueue<State<T>>).Dequeue();
+            return (openList as PriorityQueue<State<Position>>).Dequeue();
         }
 
-        private void addToOpenList(State<T> state)
+        private void addToOpenList(State<Position> state)
         {
-            (openList as PriorityQueue<State<T>>).Enqueue(state);
+            (openList as PriorityQueue<State<Position>>).Enqueue(state);
         }
 
-        public override Solution search(ISearchable<T> searchable)
+        public override Solution search(ISearchable searchable)
         { // Searcher's abstract method overriding
             addToOpenList(searchable.getInitialState()); // inherited from Searcher
-            Dictionary<T, State<T>> closed = new Dictionary<T, State<T>>();
+            Dictionary<Position, State<Position>> closed = new Dictionary<Position, State<Position>>();
             while (OpenListSize > 0)
             {
 
-                State<T> n = popOpenList();  // inherited from Searcher, removes the best state
+                State<Position> n = popOpenList();  // inherited from Searcher, removes the best state
                 closed.Add(n.StateRepresentation,n);
                 if (n.Equals(searchable.getGoalState()))
                 {
@@ -41,8 +41,8 @@ namespace SearchAlgorithmsLib
 
                 }
                 // calling the delegated method, returns a list of states with n as a parent
-                List<State<T>> succerssors = searchable.getAllPossibleStates(n);
-                foreach (State<T> s in succerssors)
+                List<State<Position>> succerssors = searchable.getAllPossibleStates(n);
+                foreach (State<Position> s in succerssors)
                 {
                     
 
@@ -55,7 +55,7 @@ namespace SearchAlgorithmsLib
                     {
                         if (openContains(s))
                         {
-                            State<T> oldS = getStateFromOpen(s);
+                            State<Position> oldS = getStateFromOpen(s);
                             if (oldS.Cost > s.Cost)
                             {
                                 removeItem(oldS);

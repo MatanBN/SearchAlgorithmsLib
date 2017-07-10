@@ -5,24 +5,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
-
+using MazeLib;
 namespace SearchAlgorithmsLib
 {
-    public class DFSSearcher<T> : Searcher<T>
+    public class DFSSearcher : Searcher
     {
 
         public DFSSearcher()
         {
-            openList = new ICollectionStack<State<T>>(new Stack<State<T>>());
+            openList = new ICollectionStack<State<Position>>(new Stack<State<Position>>());
 
         }
-        public override Solution search(ISearchable<T> searchable)
+        public override Solution search(ISearchable searchable)
         {
             addToOpenList(searchable.getInitialState());
-            Dictionary<T,State<T>> labeled = new Dictionary<T, State<T>>();
+            Dictionary<Position, State<Position>> labeled = new Dictionary<Position, State<Position>>();
             while (OpenListSize > 0 )
             {
-                State<T> n = popOpenList();
+                State<Position> n = popOpenList();
                 if (!labeled.ContainsKey(n.StateRepresentation) && !openContains(n))
                 {
 
@@ -30,8 +30,8 @@ namespace SearchAlgorithmsLib
                     if (n.Equals(searchable.getGoalState()))
                         return backTrace(n); // private method, back traces through the parents
                                              // calling the delegated method, returns a list of states with n as a parent
-                    List<State<T>> succerssors = searchable.getAllPossibleStates(n);
-                    foreach (State<T> s in succerssors)
+                    List<State<Position>> succerssors = searchable.getAllPossibleStates(n);
+                    foreach (State<Position> s in succerssors)
                     {
                         if (!labeled.ContainsKey(s.StateRepresentation) && !openContains(s))
                             addToOpenList(s);
@@ -41,15 +41,15 @@ namespace SearchAlgorithmsLib
             return null;
         }
 
-        private State<T> popOpenList()
+        private State<Position> popOpenList()
         {
             evaluatedNodes++;
-            return (openList as ICollectionStack<State<T>>).Pop();
+            return (openList as ICollectionStack<State<Position>>).Pop();
         }
 
-        private void addToOpenList(State<T> state)
+        private void addToOpenList(State<Position> state)
         {
-            (openList as ICollectionStack<State<T>>).Add(state);
+            (openList as ICollectionStack<State<Position>>).Add(state);
         }
     }
 }
